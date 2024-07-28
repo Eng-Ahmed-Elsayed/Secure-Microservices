@@ -1,10 +1,10 @@
 ﻿using Movies.API.Models;
 
-namespace Movies.API.Data.Seeds
+namespace Movies.API.Data.Seeders
 {
     public class MoviesContextSeed
     {
-        public static void SeedAsync(MoviesContext moviesContext)
+        public static void SeedAsync(MoviesAPIContext moviesContext)
         {
             if (!moviesContext.Movie.Any())
             {

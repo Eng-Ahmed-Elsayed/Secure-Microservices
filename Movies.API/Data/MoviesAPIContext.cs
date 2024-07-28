@@ -2,9 +2,9 @@
 
 namespace Movies.API.Data
 {
-    public class MoviesContext : DbContext
+    public class MoviesAPIContext : DbContext
     {
-        public MoviesContext(DbContextOptions<MoviesContext> options)
+        public MoviesAPIContext(DbContextOptions<MoviesAPIContext> options)
             : base(options)
         {
         }
