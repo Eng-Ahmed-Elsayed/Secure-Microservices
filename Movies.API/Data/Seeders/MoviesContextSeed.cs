@@ -1,4 +1,4 @@
-﻿using Movies.API.Models;
+﻿using Models.Models;
 
 namespace Movies.API.Data.Seeders
 {

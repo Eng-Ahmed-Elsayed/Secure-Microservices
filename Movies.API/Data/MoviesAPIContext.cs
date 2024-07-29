@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Models.Models;
 
 namespace Movies.API.Data
 {
@@ -9,6 +10,6 @@ namespace Movies.API.Data
         {
         }
 
-        public DbSet<Movies.API.Models.Movie> Movie { get; set; } = default!;
+        public DbSet<Movie> Movie { get; set; } = default!;
     }
 }
