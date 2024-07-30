@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Models.Models;
 using Movies.Client.ApiServices;
 using System.Diagnostics;
 
@@ -18,7 +19,7 @@ namespace Movies.Client.Controllers
             _movieApiService = movieApiService;
         }
 
-        // Login
+        // Logging Token and Claims
         public async Task LogTokenAndClaims()
         {
             var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
@@ -38,17 +39,23 @@ namespace Movies.Client.Controllers
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         }
 
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> OnlyAdmin()
+        {
+            var userInfo = await _movieApiService.GetUserInfo();
+            return View(userInfo);
+        }
+
         // GET: MoviesController
         public async Task<ActionResult> Index()
         {
-            await LogTokenAndClaims();
             return View(await _movieApiService.GetMovies());
         }
 
         // GET: MoviesController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            return View(await _movieApiService.GetMovie(id));
         }
 
         // GET: MoviesController/Create
@@ -60,57 +67,76 @@ namespace Movies.Client.Controllers
         // POST: MoviesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Movie movie)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var movieResult = await _movieApiService.CreateMovie(movie);
+                    if (movieResult != null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                return View(movie);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                Debug.WriteLine(ex.Message);
+                return View(movie);
             }
         }
 
         // GET: MoviesController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            return View(await _movieApiService.GetMovie(id));
         }
 
         // POST: MoviesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Movie movie)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var movieResult = await _movieApiService.UpdateMovie(movie);
+                    if (movieResult != null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                return View(movie);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                Debug.WriteLine(ex.Message);
+                return View(movie);
             }
         }
 
         // GET: MoviesController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            return View(await _movieApiService.GetMovie(id));
         }
 
         // POST: MoviesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> DeletePost(int id)
         {
             try
             {
+                await _movieApiService.DeleteMovie(id);
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return NotFound();
             }
         }
     }

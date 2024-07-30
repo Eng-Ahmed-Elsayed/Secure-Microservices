@@ -30,6 +30,12 @@
                         </li>
                         @if(User.Identity.IsAuthenticated)
                         {
+                            @if(User.IsInRole("admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Movies" asp-action="OnlyAdmin">Admin Only</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Movies" asp-action="Logout">Logout</a>
                             </li>

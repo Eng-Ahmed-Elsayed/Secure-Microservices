@@ -42,7 +42,7 @@ namespace Movies.API.Controllers
         // PUT: api/Movies/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
+        public async Task<ActionResult<Movie>> PutMovie(int id, Movie movie)
         {
             if (id != movie.Id)
             {
@@ -50,7 +50,6 @@ namespace Movies.API.Controllers
             }
 
             _context.Entry(movie).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -66,8 +65,7 @@ namespace Movies.API.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
+            return movie;
         }
 
         // POST: api/Movies
